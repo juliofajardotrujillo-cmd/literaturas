@@ -135,19 +135,17 @@
         }
         .icon-wrap svg { width: 36px; height: 36px; fill: currentColor; }
 
-        /* App icon preview */
+        /* App icon preview (Actualizado para usar la imagen png con bordes de 20px) */
         .app-icon-preview {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #006c4a 0%, #1db983 100%);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 20px;
+            background-color: #ffffff;
             box-shadow: 0 8px 16px -4px rgba(0,108,74,0.35);
             margin-bottom: 0.25rem;
+            object-fit: cover;
+            display: block;
         }
-        .app-icon-preview svg { width: 32px; height: 32px; fill: white; }
 
         .modal-title {
             font-family: 'Manrope', sans-serif;
@@ -336,16 +334,12 @@
 
 <!-- SVG sprites -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Libro / Biblias -->
-    <symbol id="i-book" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zM3 18.5V8c1.46-.35 3.14-.5 4.5-.5 1.36 0 3.04.15 4.5.5v10.5c-1.46-.35-3.14-.5-4.5-.5-1.36 0-3.04.15-4.5.5zm16 0c-1.46-.35-3.14-.5-4.5-.5-1.36 0-3.04.15-4.5.5V8c1.46-.35 3.14-.5 4.5-.5 1.36 0 3.04.15 4.5.5v10.5z"/></symbol>
     <!-- Añadir a inicio / home+add -->
     <symbol id="i-add-home" viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9L12 3zm0-2l9 7v13h-7v-7h-4v7H3V8l9-7z"/><path d="M19 3h-2v2h-2v2h2v2h2V7h2V5h-2z"/></symbol>
     <!-- Share iOS -->
     <symbol id="i-share" viewBox="0 0 24 24"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.89-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/></symbol>
     <!-- Menú tres puntos -->
     <symbol id="i-more" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></symbol>
-    <!-- Check -->
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
     <!-- Desktop / monitor -->
     <symbol id="i-desktop" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></symbol>
     <!-- Android chrome -->
@@ -358,9 +352,10 @@
      PANTALLA DE REDIRECCIÓN (ya instalado)
 ════════════════════════════════════════════ -->
 <div class="redirect-screen hidden" id="redirectScreen">
-    <div class="app-icon-preview" style="width:72px;height:72px;border-radius:18px;">
-        <svg viewBox="0 0 24 24" style="width:40px;height:40px;fill:white"><use href="#i-book"></use></svg>
-    </div>
+    
+    <!-- Ícono con la imagen solicitada -->
+    <img src="icon-192.png" alt="Icono" class="app-icon-preview" style="width:72px;height:72px;border-radius:20px;">
+    
     <div>
         <p style="font-family:'Manrope',sans-serif;font-size:1.1rem;font-weight:800;color:#042d1e;margin-bottom:4px;">Literaturas Bíblicas</p>
         <p style="font-size:0.75rem;color:var(--on-surface-variant);font-weight:500;">Abriendo la plataforma…</p>
@@ -378,9 +373,8 @@
         <!-- Cuerpo -->
         <div class="modal-body" id="modalBody">
 
-            <div class="app-icon-preview">
-                <svg viewBox="0 0 24 24"><use href="#i-book"></use></svg>
-            </div>
+            <!-- Ícono con la imagen solicitada -->
+            <img src="icon-192.png" alt="Icono" class="app-icon-preview">
 
             <h2 class="modal-title" id="modalTitle">Añadir a pantalla de inicio</h2>
             <p class="modal-desc" id="modalDesc">
@@ -415,6 +409,18 @@
     // ─────────────────────────────────────────────
     const APP_URL    = 'https://script.google.com/macros/s/AKfycbxErZpzjxX4OtfdjcHgr7zdVkTiATpbH0q8MA35F3gv9asJ4lAZv3z_hXBvRh4623ho/exec';
     const INSTALLED_KEY = 'lb_installed_v1';
+
+    // ─────────────────────────────────────────────
+    // REGISTRO DEL SERVICE WORKER
+    // (Esto es VITAL para que Android y Chrome disparen la instalación automática)
+    // ─────────────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(err => {
+                console.warn('Fallo en registro de SW:', err);
+            });
+        });
+    }
 
     // ─────────────────────────────────────────────
     // DETECCIÓN DE PLATAFORMA
