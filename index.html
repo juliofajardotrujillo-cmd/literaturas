@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Literaturas Bíblicas</title>
 
-    <!-- PWA Meta (para que funcione el icono y modo app) -->
+    <!-- PWA Meta -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -13,26 +13,15 @@
     <meta name="application-name" content="Lit. Bíblicas" />
     <meta name="theme-color" content="#006c4a" />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Literaturas Bíblicas" />
-    <meta property="og:description" content="Plataforma Oficial de Distribución Ministerial" />
-    <meta property="og:type" content="website" />
-
-    <!-- Iconos Apple (iOS) -->
     <link rel="apple-touch-icon" href="icon-192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png" />
-
-    <!-- Manifest para Android/Desktop (Chrome/Edge) -->
     <link rel="manifest" href="manifest.json" />
-
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="icon-192.png" />
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
             --primary: #006c4a;
             --primary-container: #1db983;
@@ -40,11 +29,8 @@
             --surface: #f8f9fa;
             --on-surface: #191c1d;
             --on-surface-variant: #3d4a42;
-            --error: #ba1a1a;
-            --outline-variant: #bbcac0;
             --tertiary: #516161;
         }
-
         body {
             font-family: 'Inter', sans-serif;
             background: #f8f9fa;
@@ -55,274 +41,77 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* Fondo igual al index.html original */
-        .bg-blobs {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(90px);
-        }
+        .bg-blobs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(90px); }
         .blob-1 { top: -5%; left: -10%; width: 50%; height: 50%; background: rgba(110,231,183,0.30); }
         .blob-2 { top: 15%; right: -15%; width: 60%; height: 60%; background: rgba(0,108,74,0.20); filter: blur(120px); }
         .blob-3 { bottom: -15%; left: 10%; width: 45%; height: 45%; background: rgba(167,243,208,0.40); }
 
-        /* Overlay oscuro del modal */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(25, 28, 29, 0.20);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            animation: fadeOverlay 0.3s ease-out;
+            position: fixed; inset: 0; background: rgba(25, 28, 29, 0.20); backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center;
+            justify-content: center; padding: 1.5rem; animation: fadeOverlay 0.3s ease-out;
         }
+        @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes fadeOverlay {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-
-        /* Modal */
         .modal {
-            background: rgba(255, 255, 255, 0.70);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255,255,255,0.40);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 360px;
-            overflow: hidden;
-            box-shadow: 0 32px 64px -12px rgba(0,0,0,0.15);
-            animation: zoomIn 0.3s ease-out;
+            background: rgba(255, 255, 255, 0.70); backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.40);
+            border-radius: 24px; width: 100%; max-width: 360px; overflow: hidden;
+            box-shadow: 0 32px 64px -12px rgba(0,0,0,0.15); animation: zoomIn 0.3s ease-out;
         }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        @keyframes zoomIn {
-            from { transform: scale(0.95); opacity: 0; }
-            to   { transform: scale(1);   opacity: 1; }
-        }
+        .modal-body { padding: 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.25rem; }
 
-        .modal-body {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 1.25rem;
-        }
+        .app-icon-preview { width: 56px; height: 56px; border-radius: 20px; background-color: #ffffff; box-shadow: 0 8px 16px -4px rgba(0,108,74,0.35); margin-bottom: 0.25rem; object-fit: cover; display: block; }
 
-        /* App icon preview (Imagen png con bordes de 20px) */
-        .app-icon-preview {
-            width: 56px;
-            height: 56px;
-            border-radius: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 8px 16px -4px rgba(0,108,74,0.35);
-            margin-bottom: 0.25rem;
-            object-fit: cover;
-            display: block;
-        }
+        .modal-title { font-family: 'Manrope', sans-serif; font-size: 1.375rem; font-weight: 800; color: var(--on-surface); letter-spacing: -0.02em; line-height: 1.2; }
+        .modal-desc { font-size: 0.8125rem; font-weight: 500; color: var(--on-surface-variant); line-height: 1.65; max-width: 280px; }
 
-        .modal-title {
-            font-family: 'Manrope', sans-serif;
-            font-size: 1.375rem;
-            font-weight: 800;
-            color: var(--on-surface);
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-        }
-
-        .modal-desc {
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: var(--on-surface-variant);
-            line-height: 1.65;
-            max-width: 280px;
-        }
-
-        /* Pasos de instrucción (para iOS/manual) */
-        .steps {
-            width: 100%;
-            background: rgba(255,255,255,0.50);
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.60);
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.625rem;
-            text-align: left;
-        }
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.625rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--on-surface-variant);
-            line-height: 1.5;
-        }
-        .step-num {
-            min-width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: rgba(0,108,74,0.12);
-            color: var(--primary);
-            font-size: 0.6875rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
+        .steps { width: 100%; background: rgba(255,255,255,0.50); border-radius: 16px; border: 1px solid rgba(255,255,255,0.60); padding: 1rem; display: flex; flex-direction: column; gap: 0.625rem; text-align: left; }
+        .step { display: flex; align-items: flex-start; gap: 0.625rem; font-size: 0.75rem; font-weight: 600; color: var(--on-surface-variant); line-height: 1.5; }
+        .step-num { min-width: 22px; height: 22px; border-radius: 50%; background: rgba(0,108,74,0.12); color: var(--primary); font-size: 0.6875rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
         .step-icon { width: 16px; height: 16px; fill: var(--primary); flex-shrink: 0; margin-top: 3px; }
 
-        /* Divisor */
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: rgba(255,255,255,0.30);
-        }
+        .divider { width: 100%; height: 1px; background: rgba(255,255,255,0.30); }
+        .highlight-text { font-size: 0.9375rem; font-weight: 800; color: #042d1e; }
 
-        /* Plataforma Label */
-        .highlight-text {
-            font-size: 0.9375rem;
-            font-weight: 800;
-            color: #042d1e;
-        }
-
-        /* Footer del modal */
-        .modal-footer {
-            padding: 1.25rem 2rem 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.20);
-            display: flex;
-            flex-direction: column;
-            gap: 0.625rem;
-        }
-
-        /* Botón principal */
-        .btn-primary {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(90deg, #006c4a 0%, #1db983 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Manrope', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.15s;
-            box-shadow: 0 8px 24px -6px rgba(0,108,74,0.35);
-        }
-        .btn-primary:hover  { opacity: 0.92; }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
-
-        /* Botón secundario (saltar) */
-        .btn-skip {
-            width: 100%;
-            padding: 0.625rem;
-            background: transparent;
-            border: none;
-            font-size: 0.6875rem;
-            font-weight: 700;
-            color: var(--tertiary);
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            cursor: pointer;
-            opacity: 0.70;
-            transition: opacity 0.2s;
-        }
+        .modal-footer { padding: 1.25rem 2rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.20); display: flex; flex-direction: column; gap: 0.625rem; }
+        
+        .btn-primary { width: 100%; padding: 1rem; background: linear-gradient(90deg, #006c4a 0%, #1db983 100%); color: white; border: none; border-radius: 8px; font-family: 'Manrope', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 8px 24px -6px rgba(0,108,74,0.35); }
+        .btn-primary:hover { opacity: 0.92; } .btn-primary:active { transform: scale(0.98); } .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+        
+        .btn-skip { width: 100%; padding: 0.625rem; background: transparent; border: none; font-size: 0.6875rem; font-weight: 700; color: var(--tertiary); letter-spacing: 0.10em; text-transform: uppercase; cursor: pointer; opacity: 0.70; transition: opacity 0.2s; }
         .btn-skip:hover { opacity: 1; }
 
-        /* Pantalla de redirección (ya instalado) */
-        .redirect-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            gap: 1rem;
-            padding: 2rem;
-            min-height: 100dvh;
-            position: relative;
-            z-index: 10;
-        }
-        .redirect-screen .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid rgba(0,108,74,0.15);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
+        .redirect-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding: 2rem; min-height: 100dvh; position: relative; z-index: 10; }
+        .redirect-screen .spinner { width: 48px; height: 48px; border: 3px solid rgba(0,108,74,0.15); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        .redirect-screen p {
-            font-family: 'Manrope', sans-serif;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--on-surface-variant);
-            letter-spacing: 0.05em;
-        }
-
-        /* Marca inferior */
-        .brand-footer {
-            font-size: 0.625rem;
-            font-weight: 700;
-            letter-spacing: 0.20em;
-            text-transform: uppercase;
-            color: rgba(4,45,30,0.40);
-            margin-top: 0.5rem;
-        }
-
-        /* Ocultar */
+        .redirect-screen p { font-family: 'Manrope', sans-serif; font-size: 0.875rem; font-weight: 600; color: var(--on-surface-variant); letter-spacing: 0.05em; }
+        
+        .brand-footer { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.20em; text-transform: uppercase; color: rgba(4,45,30,0.40); margin-top: 0.5rem; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<!-- Fondo -->
 <div class="bg-blobs">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
 </div>
 
-<!-- SVG sprites (Para los iconos de las instrucciones de instalación) -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Share iOS -->
     <symbol id="i-share" viewBox="0 0 24 24"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.89-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/></symbol>
-    <!-- Menú tres puntos -->
     <symbol id="i-more" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></symbol>
-    <!-- Desktop / monitor -->
     <symbol id="i-desktop" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></symbol>
-    <!-- Android chrome -->
     <symbol id="i-android" viewBox="0 0 24 24"><path d="M17.523 15.341a1 1 0 0 1-1-1 1 1 0 0 1 1-1 1 1 0 0 1 1 1 1 1 0 0 1-1 1m-11.046 0a1 1 0 0 1-1-1 1 1 0 0 1 1-1 1 1 0 0 1 1 1 1 1 0 0 1-1 1M17.705 9.5l1.938-3.354a.403.403 0 0 0-.148-.549.403.403 0 0 0-.55.148L17.00 9.17A11.32 11.32 0 0 0 12 8c-1.747 0-3.388.401-4.855 1.108L5.2 5.745a.403.403 0 0 0-.55-.148.403.403 0 0 0-.148.549L6.44 9.5C4.326 10.667 2.908 12.758 2.908 15.17H21.09c0-2.412-1.418-4.503-3.386-5.67"/></symbol>
-    <!-- Info -->
     <symbol id="i-info" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></symbol>
 </svg>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA DE REDIRECCIÓN (App ya instalada)
-════════════════════════════════════════════ -->
 <div class="redirect-screen hidden" id="redirectScreen">
-    <!-- Ícono con la imagen solicitada -->
     <img src="icon-192.png" alt="Icono" class="app-icon-preview" style="width:72px;height:72px;border-radius:20px;">
-    
     <div>
         <p style="font-family:'Manrope',sans-serif;font-size:1.1rem;font-weight:800;color:#042d1e;margin-bottom:4px;">Literaturas Bíblicas</p>
         <p style="font-size:0.75rem;color:var(--on-surface-variant);font-weight:500;">Abriendo la plataforma…</p>
@@ -331,29 +120,18 @@
     <p class="brand-footer">• Plataforma Oficial de Distribución Ministerial</p>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MODAL PRINCIPAL (Instalación)
-════════════════════════════════════════════ -->
 <div class="modal-overlay hidden" id="modalOverlay">
     <div class="modal" id="modal">
-        <!-- Cuerpo -->
         <div class="modal-body" id="modalBody">
-            <!-- Ícono con la imagen solicitada -->
             <img src="icon-192.png" alt="Icono" class="app-icon-preview">
-
             <h2 class="modal-title" id="modalTitle">Añadir a pantalla de inicio</h2>
             <p class="modal-desc" id="modalDesc">
                 Acceda a la plataforma de Literaturas Bíblicas directamente desde su dispositivo, como si fuera una aplicación.
             </p>
-
-            <!-- Pasos (se reemplaza dinámicamente según plataforma) -->
             <div class="steps" id="stepsBox"></div>
-
             <div class="divider"></div>
             <p class="highlight-text" id="platformLabel"></p>
         </div>
-
-        <!-- Footer con botones -->
         <div class="modal-footer">
             <button class="btn-primary" id="btnAction" onclick="handleAction()">
                 AÑADIR A INICIO
@@ -367,47 +145,29 @@
 </div>
 
 <script>
-    // ─────────────────────────────────────────────
-    // CONSTANTES
-    // ─────────────────────────────────────────────
     const APP_URL = 'https://script.google.com/macros/s/AKfycbxErZpzjxX4OtfdjcHgr7zdVkTiATpbH0q8MA35F3gv9asJ4lAZv3z_hXBvRh4623ho/exec';
 
-    // ─────────────────────────────────────────────
-    // REGISTRO DEL SERVICE WORKER (VITAL para Chrome/Android)
-    // ─────────────────────────────────────────────
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(err => {
-                console.warn('Fallo en registro de SW:', err);
-            });
+            navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW:', err));
         });
     }
 
-    // ─────────────────────────────────────────────
-    // DETECCIÓN DE PLATAFORMA
-    // ─────────────────────────────────────────────
-    const ua       = navigator.userAgent || '';
-    const isIOS    = /iP(hone|ad|od)/i.test(ua);
-    const isMac    = /Macintosh/i.test(ua) && !isIOS;
-    const isAndroid= /Android/i.test(ua);
-    const isWindows= /Windows/i.test(ua);
-    const isLinux  = /Linux/i.test(ua) && !isAndroid;
+    const ua = navigator.userAgent || '';
+    const isIOS = /iP(hone|ad|od)/i.test(ua);
+    const isMac = /Macintosh/i.test(ua) && !isIOS;
+    const isAndroid = /Android/i.test(ua);
+    const isWindows = /Windows/i.test(ua);
+    const isLinux = /Linux/i.test(ua) && !isAndroid;
     const isSafari = /Safari/i.test(ua) && !/Chrome/i.test(ua);
     const isChrome = /Chrome/i.test(ua) && !/Edg/i.test(ua);
-    const isEdge   = /Edg/i.test(ua);
-    const isFirefox= /Firefox/i.test(ua);
+    const isEdge = /Edg/i.test(ua);
+    const isFirefox = /Firefox/i.test(ua);
     const isSamsungBrowser = /SamsungBrowser/i.test(ua);
 
-    // ¿La página fue abierta directamente desde la app instalada en la pantalla de inicio?
-    const isStandalone =
-        window.matchMedia('(display-mode: standalone)').matches ||
-        window.matchMedia('(display-mode: fullscreen)').matches ||
-        window.navigator.standalone === true ||
-        document.referrer.includes('android-app://');
+    // Detección ESTRICTA de App Instalada
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-    // ─────────────────────────────────────────────
-    // EVENTO beforeinstallprompt (Chrome/Edge/Android)
-    // ─────────────────────────────────────────────
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -415,35 +175,26 @@
         updateButtonForNative();
     });
 
-    // ─────────────────────────────────────────────
-    // LÓGICA PRINCIPAL AL CARGAR LA PÁGINA
-    // ─────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
-        // ÚNICA CONDICIÓN PARA SALTAR EL CARTEL: Si ya estamos dentro de la app instalada.
+        // ÚNICA regla para saltar: estar abriéndolo como app nativa instalada.
         if (isStandalone) {
             goToApp();
-            return;
+        } else {
+            buildModal();
+            show('modalOverlay');
         }
-
-        // Si NO estamos en modo standalone (es decir, estamos en el navegador), mostrar SIEMPRE el cartel.
-        buildModal();
-        show('modalOverlay');
     });
 
-    // ─────────────────────────────────────────────
-    // CONSTRUCCIÓN DEL MODAL SEGÚN NAVEGADOR
-    // ─────────────────────────────────────────────
     function buildModal() {
-        const stepsBox     = document.getElementById('stepsBox');
-        const platformLabel= document.getElementById('platformLabel');
-        const btnAction    = document.getElementById('btnAction');
+        const stepsBox = document.getElementById('stepsBox');
+        const platformLabel = document.getElementById('platformLabel');
+        const btnAction = document.getElementById('btnAction');
 
-        let steps   = [];
-        let label   = '';
+        let steps = [];
+        let label = '';
         let btnText = 'AÑADIR A INICIO';
 
         if (isIOS) {
-            // iOS Safari
             label = 'iOS · Safari';
             if (!isSafari) {
                 label = 'iOS · Abrir en Safari';
@@ -457,12 +208,11 @@
             } else {
                 btnText = 'VER INSTRUCCIONES';
                 steps = [
-                    { icon: 'i-share', text: 'Pulsa el ícono Compartir (cuadro con flecha ↑) en la barra de Safari.' },
+                    { icon: 'i-share', text: 'Pulsa el ícono Compartir (cuadro con flecha ↑) en la barra inferior.' },
                     { text: 'Desplázate y toca "Añadir a pantalla de inicio".' },
                     { text: 'Confirma tocando "Añadir" en la esquina superior derecha.' }
                 ];
             }
-
         } else if (isAndroid) {
             label = 'Android · ' + (isSamsungBrowser ? 'Samsung Internet' : isChrome ? 'Chrome' : isEdge ? 'Edge' : 'Navegador');
             if (deferredPrompt) {
@@ -494,7 +244,6 @@
                     { text: 'Confirma para crear el icono.' }
                 ];
             }
-
         } else if (isWindows || isMac || isLinux) {
             const browser = isEdge ? 'Edge' : isChrome ? 'Chrome' : isFirefox ? 'Firefox' : 'Navegador';
             label = (isWindows ? 'Windows' : isMac ? 'macOS' : 'PC') + ' · ' + browser;
@@ -516,9 +265,7 @@
                     { text: 'Haz clic para añadir el acceso directo como aplicación.' }
                 ];
             }
-
         } else {
-            // Genérico
             label = 'Tu dispositivo';
             btnText = 'VER INSTRUCCIONES';
             steps = [
@@ -528,17 +275,12 @@
             ];
         }
 
-        // Renderizar pasos
         stepsBox.innerHTML = steps.map((s, i) => `
             <div class="step">
-                <div class="step-num">${s.icon
-                    ? `<svg class="step-icon" viewBox="0 0 24 24"><use href="#${s.icon}"></use></svg>`
-                    : i + 1
-                }</div>
+                <div class="step-num">${s.icon ? `<svg class="step-icon" viewBox="0 0 24 24"><use href="#${s.icon}"></use></svg>` : i + 1}</div>
                 <span>${s.text}</span>
             </div>
         `).join('');
-
         platformLabel.textContent = label;
         btnAction.textContent = btnText;
     }
@@ -547,17 +289,13 @@
         const btn = document.getElementById('btnAction');
         if (btn && (isAndroid || (!isIOS && (isWindows || isMac || isLinux)))) {
             btn.textContent = (isWindows || isMac || isLinux) ? 'INSTALAR APLICACIÓN' : 'AÑADIR A INICIO AHORA';
-            buildModal(); // Re-renderizar instrucciones si el prompt nativo se activó
+            buildModal(); 
         }
     }
 
-    // ─────────────────────────────────────────────
-    // ACCIÓN DEL BOTÓN PRINCIPAL
-    // ─────────────────────────────────────────────
     async function handleAction() {
         const btn = document.getElementById('btnAction');
 
-        // Instalación nativa automática si el navegador lo permite (Chrome/Edge/Android)
         if (deferredPrompt) {
             btn.disabled = true;
             btn.textContent = 'INSTALANDO…';
@@ -579,42 +317,29 @@
             return;
         }
 
-        // Si es iOS pero NO es Safari (Ej: Abrió link desde Facebook o Chrome en iPhone)
         if (isIOS && !isSafari) {
             window.location.href = 'x-web-search://?q=' + encodeURIComponent(location.href);
             setTimeout(() => {
-                document.getElementById('modalDesc').textContent =
-                    'Copia esta URL y ábrela en Safari: ' + location.href;
+                document.getElementById('modalDesc').textContent = 'Copia esta URL y ábrela en Safari: ' + location.href;
             }, 400);
             return;
         }
 
-        // Si es cualquier otro caso donde la instalación es manual, pasamos directo al sistema.
         skipAndGo();
     }
 
-    // ─────────────────────────────────────────────
-    // SALTAR E IR AL SISTEMA
-    // ─────────────────────────────────────────────
     function skipAndGo() {
         hide('modalOverlay');
         goToApp();
     }
 
-    // ─────────────────────────────────────────────
-    // MOSTRAR PANTALLA DE CARGA Y ABRIR APP URL
-    // ─────────────────────────────────────────────
     function goToApp() {
         show('redirectScreen');
-        // Pequeño retraso para que se vea la animación de carga antes de redireccionar
-        setTimeout(() => {
-            window.location.href = APP_URL;
-        }, 800);
+        setTimeout(() => { window.location.href = APP_URL; }, 800);
     }
 
-    // Helpers
     function show(id) { document.getElementById(id).classList.remove('hidden'); }
-    function hide(id) { document.getElementById(id).classList.add('hidden');    }
+    function hide(id) { document.getElementById(id).classList.add('hidden'); }
 </script>
 
 </body>
