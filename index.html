@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Literaturas Bíblicas</title>
+
+    <!-- PWA Meta (para que funcione el icono y modo app) -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Lit. Bíblicas" />
+    <meta name="application-name" content="Lit. Bíblicas" />
+    <meta name="theme-color" content="#006c4a" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Literaturas Bíblicas" />
+    <meta property="og:description" content="Plataforma Oficial de Distribución Ministerial" />
+    <meta property="og:type" content="website" />
+
+    <!-- Iconos Apple (iOS) -->
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png" />
+
+    <!-- Manifest para Android/Desktop (Chrome/Edge) -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="icon-192.png" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #006c4a;
+            --primary-container: #1db983;
+            --on-primary: #ffffff;
+            --surface: #f8f9fa;
+            --on-surface: #191c1d;
+            --on-surface-variant: #3d4a42;
+            --error: #ba1a1a;
+            --outline-variant: #bbcac0;
+            --tertiary: #516161;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fondo igual al index.html original */
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+        }
+        .blob-1 { top: -5%; left: -10%; width: 50%; height: 50%; background: rgba(110,231,183,0.30); }
+        .blob-2 { top: 15%; right: -15%; width: 60%; height: 60%; background: rgba(0,108,74,0.20); filter: blur(120px); }
+        .blob-3 { bottom: -15%; left: 10%; width: 45%; height: 45%; background: rgba(167,243,208,0.40); }
+
+        /* Overlay oscuro del modal (igual al de recuperar clave) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(25, 28, 29, 0.20);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            animation: fadeOverlay 0.3s ease-out;
+        }
+
+        @keyframes fadeOverlay {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* Modal — exactamente como glass-modal del index.html */
+        .modal {
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.40);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            overflow: hidden;
+            box-shadow: 0 32px 64px -12px rgba(0,0,0,0.15);
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        .modal-body {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.25rem;
+        }
+
+        /* Ícono contenedor — igual al de recuperar clave */
+        .icon-wrap {
+            width: 64px;
+            height: 64px;
+            background: rgba(0,108,74,0.10);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+        .icon-wrap svg { width: 36px; height: 36px; fill: currentColor; }
+
+        /* App icon preview */
+        .app-icon-preview {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #006c4a 0%, #1db983 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px -4px rgba(0,108,74,0.35);
+            margin-bottom: 0.25rem;
+        }
+        .app-icon-preview svg { width: 32px; height: 32px; fill: white; }
+
+        .modal-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: var(--on-surface);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .modal-desc {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--on-surface-variant);
+            line-height: 1.65;
+            max-width: 280px;
+        }
+
+        /* Pasos de instrucción (para iOS/manual) */
+        .steps {
+            width: 100%;
+            background: rgba(255,255,255,0.50);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.60);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+            text-align: left;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            line-height: 1.5;
+        }
+        .step-num {
+            min-width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(0,108,74,0.12);
+            color: var(--primary);
+            font-size: 0.6875rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .step-icon { width: 16px; height: 16px; fill: var(--primary); flex-shrink: 0; margin-top: 3px; }
+
+        /* Divisor */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255,255,255,0.30);
+        }
+
+        /* Número de teléfono / URL (reutilizado del modal original) */
+        .highlight-text {
+            font-size: 0.9375rem;
+            font-weight: 800;
+            color: #042d1e;
+        }
+
+        /* Footer del modal */
+        .modal-footer {
+            padding: 1.25rem 2rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.20);
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        /* Botón principal — igual al del modal de recuperar clave */
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, #006c4a 0%, #1db983 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+            box-shadow: 0 8px 24px -6px rgba(0,108,74,0.35);
+        }
+        .btn-primary:hover  { opacity: 0.92; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        /* Botón secundario (saltar) */
+        .btn-skip {
+            width: 100%;
+            padding: 0.625rem;
+            background: transparent;
+            border: none;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: var(--tertiary);
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+            cursor: pointer;
+            opacity: 0.70;
+            transition: opacity 0.2s;
+        }
+        .btn-skip:hover { opacity: 1; }
+
+        /* Badge de plataforma */
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(0,108,74,0.08);
+            color: var(--primary);
+            border-radius: 999px;
+            padding: 0.2rem 0.625rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .platform-badge svg { width: 11px; height: 11px; fill: currentColor; }
+
+        /* Pantalla de redirección (ya instalado o tras instalar) */
+        .redirect-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 1rem;
+            padding: 2rem;
+            min-height: 100dvh;
+            position: relative;
+            z-index: 10;
+        }
+        .redirect-screen .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(0,108,74,0.15);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .redirect-screen p {
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            letter-spacing: 0.05em;
+        }
+
+        /* Marca inferior */
+        .brand-footer {
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.20em;
+            text-transform: uppercase;
+            color: rgba(4,45,30,0.40);
+            margin-top: 0.5rem;
+        }
+
+        /* Ocultar */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- Fondo -->
+<div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+</div>
+
+<!-- SVG sprites -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Libro / Biblias -->
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zM3 18.5V8c1.46-.35 3.14-.5 4.5-.5 1.36 0 3.04.15 4.5.5v10.5c-1.46-.35-3.14-.5-4.5-.5-1.36 0-3.04.15-4.5.5zm16 0c-1.46-.35-3.14-.5-4.5-.5-1.36 0-3.04.15-4.5.5V8c1.46-.35 3.14-.5 4.5-.5 1.36 0 3.04.15 4.5.5v10.5z"/></symbol>
+    <!-- Añadir a inicio / home+add -->
+    <symbol id="i-add-home" viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9L12 3zm0-2l9 7v13h-7v-7h-4v7H3V8l9-7z"/><path d="M19 3h-2v2h-2v2h2v2h2V7h2V5h-2z"/></symbol>
+    <!-- Share iOS -->
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.89-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/></symbol>
+    <!-- Menú tres puntos -->
+    <symbol id="i-more" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></symbol>
+    <!-- Check -->
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+    <!-- Desktop / monitor -->
+    <symbol id="i-desktop" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></symbol>
+    <!-- Android chrome -->
+    <symbol id="i-android" viewBox="0 0 24 24"><path d="M17.523 15.341a1 1 0 0 1-1-1 1 1 0 0 1 1-1 1 1 0 0 1 1 1 1 1 0 0 1-1 1m-11.046 0a1 1 0 0 1-1-1 1 1 0 0 1 1-1 1 1 0 0 1 1 1 1 1 0 0 1-1 1M17.705 9.5l1.938-3.354a.403.403 0 0 0-.148-.549.403.403 0 0 0-.55.148L17.00 9.17A11.32 11.32 0 0 0 12 8c-1.747 0-3.388.401-4.855 1.108L5.2 5.745a.403.403 0 0 0-.55-.148.403.403 0 0 0-.148.549L6.44 9.5C4.326 10.667 2.908 12.758 2.908 15.17H21.09c0-2.412-1.418-4.503-3.386-5.67"/></symbol>
+    <!-- Info -->
+    <symbol id="i-info" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></symbol>
+</svg>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA DE REDIRECCIÓN (ya instalado)
+════════════════════════════════════════════ -->
+<div class="redirect-screen hidden" id="redirectScreen">
+    <div class="app-icon-preview" style="width:72px;height:72px;border-radius:18px;">
+        <svg viewBox="0 0 24 24" style="width:40px;height:40px;fill:white"><use href="#i-book"></use></svg>
+    </div>
+    <div>
+        <p style="font-family:'Manrope',sans-serif;font-size:1.1rem;font-weight:800;color:#042d1e;margin-bottom:4px;">Literaturas Bíblicas</p>
+        <p style="font-size:0.75rem;color:var(--on-surface-variant);font-weight:500;">Abriendo la plataforma…</p>
+    </div>
+    <div class="spinner"></div>
+    <p class="brand-footer">• Plataforma Oficial de Distribución Ministerial</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL PRINCIPAL (igual que recuperar clave)
+════════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal" id="modal">
+
+        <!-- Cuerpo -->
+        <div class="modal-body" id="modalBody">
+
+            <div class="app-icon-preview">
+                <svg viewBox="0 0 24 24"><use href="#i-book"></use></svg>
+            </div>
+
+            <h2 class="modal-title" id="modalTitle">Añadir a pantalla de inicio</h2>
+            <p class="modal-desc" id="modalDesc">
+                Acceda a la plataforma de Literaturas Bíblicas directamente desde su dispositivo, como si fuera una aplicación.
+            </p>
+
+            <!-- Pasos (se reemplaza dinámicamente según plataforma) -->
+            <div class="steps" id="stepsBox"></div>
+
+            <div class="divider"></div>
+            <p class="highlight-text" id="platformLabel"></p>
+
+        </div>
+
+        <!-- Footer con botones -->
+        <div class="modal-footer">
+            <button class="btn-primary" id="btnAction" onclick="handleAction()">
+                AÑADIR A INICIO
+            </button>
+            <button class="btn-skip" onclick="skipAndGo()">
+                Ahora no, continuar sin instalar
+            </button>
+            <p class="brand-footer">• Plataforma Oficial de Distribución Ministerial</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ─────────────────────────────────────────────
+    // CONSTANTES
+    // ─────────────────────────────────────────────
+    const APP_URL    = 'https://script.google.com/macros/s/AKfycbxErZpzjxX4OtfdjcHgr7zdVkTiATpbH0q8MA35F3gv9asJ4lAZv3z_hXBvRh4623ho/exec';
+    const INSTALLED_KEY = 'lb_installed_v1';
+
+    // ─────────────────────────────────────────────
+    // DETECCIÓN DE PLATAFORMA
+    // ─────────────────────────────────────────────
+    const ua       = navigator.userAgent || '';
+    const isIOS    = /iP(hone|ad|od)/i.test(ua);
+    const isMac    = /Macintosh/i.test(ua) && !isIOS;
+    const isAndroid= /Android/i.test(ua);
+    const isWindows= /Windows/i.test(ua);
+    const isLinux  = /Linux/i.test(ua) && !isAndroid;
+    const isSafari = /Safari/i.test(ua) && !/Chrome/i.test(ua);
+    const isChrome = /Chrome/i.test(ua) && !/Edg/i.test(ua);
+    const isEdge   = /Edg/i.test(ua);
+    const isFirefox= /Firefox/i.test(ua);
+    const isSamsungBrowser = /SamsungBrowser/i.test(ua);
+
+    // ¿Se abrió desde pantalla de inicio / modo standalone?
+    const isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.navigator.standalone === true ||
+        document.referrer.includes('android-app://');
+
+    // ─────────────────────────────────────────────
+    // EVENTO beforeinstallprompt (Chrome/Edge/Android)
+    // ─────────────────────────────────────────────
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Si el modal ya está visible, actualiza el botón
+        updateButtonForNative();
+    });
+
+    // ─────────────────────────────────────────────
+    // LÓGICA PRINCIPAL
+    // ─────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+
+        // Si ya viene de la app instalada → ir directo
+        if (isStandalone) {
+            goToApp();
+            return;
+        }
+
+        // Si el usuario ya instaló antes (marcado en localStorage) → ir directo
+        if (localStorage.getItem(INSTALLED_KEY)) {
+            goToApp();
+            return;
+        }
+
+        // Mostrar modal con instrucciones para la plataforma
+        buildModal();
+        show('modalOverlay');
+    });
+
+    // ─────────────────────────────────────────────
+    // CONSTRUCCIÓN DEL MODAL SEGÚN PLATAFORMA
+    // ─────────────────────────────────────────────
+    function buildModal() {
+        const stepsBox     = document.getElementById('stepsBox');
+        const platformLabel= document.getElementById('platformLabel');
+        const btnAction    = document.getElementById('btnAction');
+
+        let steps   = [];
+        let label   = '';
+        let btnText = 'AÑADIR A INICIO';
+
+        if (isIOS) {
+            // iOS Safari
+            label = 'iOS · Safari';
+            if (!isSafari) {
+                // Chrome/Firefox en iOS no pueden añadir — redirigir a Safari
+                label = 'iOS · Abrir en Safari';
+                btnText = 'ABRIR EN SAFARI';
+                steps = [
+                    { text: 'Toca el botón de abajo para abrir esta página en Safari.' },
+                    { text: 'Luego pulsa el ícono Compartir (cuadro con flecha ↑).' },
+                    { text: 'Selecciona "Añadir a pantalla de inicio".' },
+                    { text: 'Confirma tocando "Añadir".' }
+                ];
+            } else {
+                btnText = 'VER INSTRUCCIONES';
+                steps = [
+                    { icon: 'i-share', text: 'Pulsa el ícono Compartir (cuadro con flecha ↑) en la barra de Safari.' },
+                    { text: 'Desplázate y toca "Añadir a pantalla de inicio".' },
+                    { text: 'Confirma tocando "Añadir" en la esquina superior derecha.' }
+                ];
+            }
+
+        } else if (isAndroid) {
+            label = 'Android · ' + (isSamsungBrowser ? 'Samsung Internet' : isChrome ? 'Chrome' : isEdge ? 'Edge' : 'Navegador');
+            if (deferredPrompt) {
+                btnText = 'AÑADIR A INICIO AHORA';
+                steps = [
+                    { icon: 'i-android', text: 'Toca el botón de abajo.' },
+                    { text: 'Confirma "Añadir" en el mensaje del sistema.' },
+                    { text: 'El icono aparecerá en tu pantalla de inicio.' }
+                ];
+            } else if (isSamsungBrowser) {
+                btnText = 'VER INSTRUCCIONES';
+                steps = [
+                    { icon: 'i-more', text: 'Toca el ícono ⋮ (menú) en la esquina inferior derecha.' },
+                    { text: 'Selecciona "Añadir a pantalla de inicio".' },
+                    { text: 'Confirma tocando "Añadir".' }
+                ];
+            } else if (isFirefox) {
+                btnText = 'VER INSTRUCCIONES';
+                steps = [
+                    { icon: 'i-more', text: 'Toca el ícono ⋮ (menú) arriba a la derecha.' },
+                    { text: 'Selecciona "Instalar" o "Añadir a pantalla de inicio".' },
+                    { text: 'Confirma en el diálogo que aparece.' }
+                ];
+            } else {
+                btnText = 'VER INSTRUCCIONES';
+                steps = [
+                    { icon: 'i-more', text: 'Toca el ícono ⋮ (menú) del navegador.' },
+                    { text: 'Busca "Añadir a pantalla de inicio" o "Instalar app".' },
+                    { text: 'Confirma para crear el icono.' }
+                ];
+            }
+
+        } else if (isWindows || isMac || isLinux) {
+            const browser = isEdge ? 'Edge' : isChrome ? 'Chrome' : isFirefox ? 'Firefox' : 'tu navegador';
+            label = (isWindows ? 'Windows' : isMac ? 'macOS' : 'Linux') + ' · ' + browser;
+
+            if ((isChrome || isEdge) && !isFirefox) {
+                btnText = deferredPrompt ? 'AÑADIR A INICIO AHORA' : 'VER INSTRUCCIONES';
+                steps = [
+                    { icon: 'i-desktop', text: deferredPrompt
+                        ? 'Toca el botón de abajo para añadir directamente.'
+                        : 'En la barra de dirección busca el ícono ⊕ o de instalación a la derecha.' },
+                    { text: 'O ve al menú ⋮ → "Guardar e instalar" → "Instalar sitio como app".' },
+                    { text: 'El icono aparecerá en tu escritorio / barra de tareas.' }
+                ];
+            } else {
+                btnText = 'VER INSTRUCCIONES';
+                steps = [
+                    { icon: 'i-info', text: 'Para la mejor experiencia, usa Google Chrome o Microsoft Edge.' },
+                    { text: 'Abre esta página en Chrome/Edge y busca el ícono de instalación en la barra de dirección.' },
+                    { text: 'Haz clic en "Instalar" para añadir el acceso directo.' }
+                ];
+            }
+
+        } else {
+            // Genérico
+            label = 'Tu dispositivo';
+            btnText = 'VER INSTRUCCIONES';
+            steps = [
+                { icon: 'i-more', text: 'Abre el menú de tu navegador (ícono ⋮ o ≡).' },
+                { text: 'Busca la opción "Añadir a pantalla de inicio" o "Instalar app".' },
+                { text: 'Confirma para crear el acceso directo.' }
+            ];
+        }
+
+        // Renderizar pasos
+        stepsBox.innerHTML = steps.map((s, i) => `
+            <div class="step">
+                <div class="step-num">${s.icon
+                    ? `<svg class="step-icon" viewBox="0 0 24 24"><use href="#${s.icon}"></use></svg>`
+                    : i + 1
+                }</div>
+                <span>${s.text}</span>
+            </div>
+        `).join('');
+
+        platformLabel.textContent = label;
+        btnAction.textContent = btnText;
+    }
+
+    function updateButtonForNative() {
+        const btn = document.getElementById('btnAction');
+        if (btn && (isAndroid || (!isIOS && (isWindows || isMac || isLinux)))) {
+            btn.textContent = 'AÑADIR A INICIO AHORA';
+            // Re-render steps para Android con prompt disponible
+            buildModal();
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // ACCIÓN DEL BOTÓN PRINCIPAL
+    // ─────────────────────────────────────────────
+    async function handleAction() {
+        const btn = document.getElementById('btnAction');
+
+        // Chrome/Edge con beforeinstallprompt disponible
+        if (deferredPrompt) {
+            btn.disabled = true;
+            btn.textContent = 'AÑADIENDO…';
+            try {
+                await deferredPrompt.prompt();
+                const choice = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                if (choice.outcome === 'accepted') {
+                    localStorage.setItem(INSTALLED_KEY, '1');
+                    btn.textContent = '✓ AÑADIDO CORRECTAMENTE';
+                    setTimeout(goToApp, 1200);
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'AÑADIR A INICIO';
+                }
+            } catch(e) {
+                btn.disabled = false;
+                btn.textContent = 'AÑADIR A INICIO';
+            }
+            return;
+        }
+
+        // iOS no-Safari → abrir en Safari
+        if (isIOS && !isSafari) {
+            window.location.href = 'x-web-search://?q=' + encodeURIComponent(location.href);
+            // Fallback: intentar abrir directamente
+            setTimeout(() => {
+                // Mostrar instrucción de copiar URL
+                document.getElementById('modalDesc').textContent =
+                    'Copia esta URL y ábrela en Safari: ' + location.href;
+            }, 400);
+            return;
+        }
+
+        // Para el resto (instrucciones manuales) → el botón muestra que se leyó, y abre la app
+        localStorage.setItem(INSTALLED_KEY, '1');
+        skipAndGo();
+    }
+
+    // ─────────────────────────────────────────────
+    // SALTAR → ir a la app directamente
+    // ─────────────────────────────────────────────
+    function skipAndGo() {
+        hide('modalOverlay');
+        goToApp();
+    }
+
+    // ─────────────────────────────────────────────
+    // IR A LA APP
+    // ─────────────────────────────────────────────
+    function goToApp() {
+        show('redirectScreen');
+        // Pequeño delay para que se vea la pantalla de carga
+        setTimeout(() => {
+            window.location.href = APP_URL;
+        }, 800);
+    }
+
+    // ─────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────
+    function show(id) { document.getElementById(id).classList.remove('hidden'); }
+    function hide(id) { document.getElementById(id).classList.add('hidden');    }
+</script>
+
+</body>
+</html>
