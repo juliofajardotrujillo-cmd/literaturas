@@ -73,7 +73,7 @@
         .blob-2 { top: 15%; right: -15%; width: 60%; height: 60%; background: rgba(0,108,74,0.20); filter: blur(120px); }
         .blob-3 { bottom: -15%; left: 10%; width: 45%; height: 45%; background: rgba(167,243,208,0.40); }
 
-        /* Overlay oscuro del modal (igual al de recuperar clave) */
+        /* Overlay oscuro del modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -93,7 +93,7 @@
             to   { opacity: 1; }
         }
 
-        /* Modal — exactamente como glass-modal del index.html */
+        /* Modal */
         .modal {
             background: rgba(255, 255, 255, 0.70);
             backdrop-filter: blur(24px);
@@ -120,20 +120,6 @@
             text-align: center;
             gap: 1.25rem;
         }
-
-        /* Ícono contenedor — igual al de recuperar clave */
-        .icon-wrap {
-            width: 64px;
-            height: 64px;
-            background: rgba(0,108,74,0.10);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            margin-bottom: 0.25rem;
-        }
-        .icon-wrap svg { width: 36px; height: 36px; fill: currentColor; }
 
         /* App icon preview (Imagen png con bordes de 20px) */
         .app-icon-preview {
@@ -208,7 +194,7 @@
             background: rgba(255,255,255,0.30);
         }
 
-        /* Número de teléfono / URL (reutilizado del modal original) */
+        /* Plataforma Label */
         .highlight-text {
             font-size: 0.9375rem;
             font-weight: 800;
@@ -224,7 +210,7 @@
             gap: 0.625rem;
         }
 
-        /* Botón principal — igual al del modal de recuperar clave */
+        /* Botón principal */
         .btn-primary {
             width: 100%;
             padding: 1rem;
@@ -262,23 +248,7 @@
         }
         .btn-skip:hover { opacity: 1; }
 
-        /* Badge de plataforma */
-        .platform-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: rgba(0,108,74,0.08);
-            color: var(--primary);
-            border-radius: 999px;
-            padding: 0.2rem 0.625rem;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-        .platform-badge svg { width: 11px; height: 11px; fill: currentColor; }
-
-        /* Pantalla de redirección (ya instalado o tras instalar) */
+        /* Pantalla de redirección (ya instalado) */
         .redirect-screen {
             display: flex;
             flex-direction: column;
@@ -332,10 +302,8 @@
     <div class="blob blob-3"></div>
 </div>
 
-<!-- SVG sprites -->
+<!-- SVG sprites (Para los iconos de las instrucciones de instalación) -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Añadir a inicio / home+add -->
-    <symbol id="i-add-home" viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9L12 3zm0-2l9 7v13h-7v-7h-4v7H3V8l9-7z"/><path d="M19 3h-2v2h-2v2h2v2h2V7h2V5h-2z"/></symbol>
     <!-- Share iOS -->
     <symbol id="i-share" viewBox="0 0 24 24"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.89-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/></symbol>
     <!-- Menú tres puntos -->
@@ -349,10 +317,9 @@
 </svg>
 
 <!-- ═══════════════════════════════════════════
-     PANTALLA DE REDIRECCIÓN (ya instalado)
+     PANTALLA DE REDIRECCIÓN (App ya instalada)
 ════════════════════════════════════════════ -->
 <div class="redirect-screen hidden" id="redirectScreen">
-    
     <!-- Ícono con la imagen solicitada -->
     <img src="icon-192.png" alt="Icono" class="app-icon-preview" style="width:72px;height:72px;border-radius:20px;">
     
@@ -365,14 +332,12 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
-     MODAL PRINCIPAL (igual que recuperar clave)
+     MODAL PRINCIPAL (Instalación)
 ════════════════════════════════════════════ -->
 <div class="modal-overlay hidden" id="modalOverlay">
     <div class="modal" id="modal">
-
         <!-- Cuerpo -->
         <div class="modal-body" id="modalBody">
-
             <!-- Ícono con la imagen solicitada -->
             <img src="icon-192.png" alt="Icono" class="app-icon-preview">
 
@@ -386,7 +351,6 @@
 
             <div class="divider"></div>
             <p class="highlight-text" id="platformLabel"></p>
-
         </div>
 
         <!-- Footer con botones -->
@@ -399,7 +363,6 @@
             </button>
             <p class="brand-footer">• Plataforma Oficial de Distribución Ministerial</p>
         </div>
-
     </div>
 </div>
 
@@ -407,14 +370,10 @@
     // ─────────────────────────────────────────────
     // CONSTANTES
     // ─────────────────────────────────────────────
-    const APP_URL    = 'https://script.google.com/macros/s/AKfycbxErZpzjxX4OtfdjcHgr7zdVkTiATpbH0q8MA35F3gv9asJ4lAZv3z_hXBvRh4623ho/exec';
-    
-    // HE CAMBIADO LA VERSIÓN (v2) PARA QUE SE BORRE LA MEMORIA DE TU NAVEGADOR
-    // Y TE VUELVA A MOSTRAR EL CUADRO DE INSTALACIÓN EN TUS PRUEBAS.
-    const INSTALLED_KEY = 'lb_installed_v2';
+    const APP_URL = 'https://script.google.com/macros/s/AKfycbxErZpzjxX4OtfdjcHgr7zdVkTiATpbH0q8MA35F3gv9asJ4lAZv3z_hXBvRh4623ho/exec';
 
     // ─────────────────────────────────────────────
-    // REGISTRO DEL SERVICE WORKER (Necesario para instalación automática)
+    // REGISTRO DEL SERVICE WORKER (VITAL para Chrome/Android)
     // ─────────────────────────────────────────────
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -439,7 +398,7 @@
     const isFirefox= /Firefox/i.test(ua);
     const isSamsungBrowser = /SamsungBrowser/i.test(ua);
 
-    // ¿Se abrió desde pantalla de inicio / modo standalone?
+    // ¿La página fue abierta directamente desde la app instalada en la pantalla de inicio?
     const isStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
         window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -453,34 +412,26 @@
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        // Si el modal ya está visible, actualiza el botón
         updateButtonForNative();
     });
 
     // ─────────────────────────────────────────────
-    // LÓGICA PRINCIPAL
+    // LÓGICA PRINCIPAL AL CARGAR LA PÁGINA
     // ─────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
-
-        // Si ya viene de la app instalada → ir directo
+        // ÚNICA CONDICIÓN PARA SALTAR EL CARTEL: Si ya estamos dentro de la app instalada.
         if (isStandalone) {
             goToApp();
             return;
         }
 
-        // Si el usuario ya instaló antes (marcado en localStorage) → ir directo
-        if (localStorage.getItem(INSTALLED_KEY)) {
-            goToApp();
-            return;
-        }
-
-        // Mostrar modal con instrucciones para la plataforma
+        // Si NO estamos en modo standalone (es decir, estamos en el navegador), mostrar SIEMPRE el cartel.
         buildModal();
         show('modalOverlay');
     });
 
     // ─────────────────────────────────────────────
-    // CONSTRUCCIÓN DEL MODAL SEGÚN PLATAFORMA
+    // CONSTRUCCIÓN DEL MODAL SEGÚN NAVEGADOR
     // ─────────────────────────────────────────────
     function buildModal() {
         const stepsBox     = document.getElementById('stepsBox');
@@ -495,7 +446,6 @@
             // iOS Safari
             label = 'iOS · Safari';
             if (!isSafari) {
-                // Chrome/Firefox en iOS no pueden añadir — redirigir a Safari
                 label = 'iOS · Abrir en Safari';
                 btnText = 'ABRIR EN SAFARI';
                 steps = [
@@ -519,14 +469,14 @@
                 btnText = 'AÑADIR A INICIO AHORA';
                 steps = [
                     { icon: 'i-android', text: 'Toca el botón de abajo.' },
-                    { text: 'Confirma "Añadir" en el mensaje del sistema.' },
+                    { text: 'Confirma "Instalar" o "Añadir" en el mensaje del sistema.' },
                     { text: 'El icono aparecerá en tu pantalla de inicio.' }
                 ];
             } else if (isSamsungBrowser) {
                 btnText = 'VER INSTRUCCIONES';
                 steps = [
                     { icon: 'i-more', text: 'Toca el ícono ⋮ (menú) en la esquina inferior derecha.' },
-                    { text: 'Selecciona "Añadir a pantalla de inicio".' },
+                    { text: 'Selecciona "Añadir a página de inicio".' },
                     { text: 'Confirma tocando "Añadir".' }
                 ];
             } else if (isFirefox) {
@@ -546,24 +496,24 @@
             }
 
         } else if (isWindows || isMac || isLinux) {
-            const browser = isEdge ? 'Edge' : isChrome ? 'Chrome' : isFirefox ? 'Firefox' : 'tu navegador';
-            label = (isWindows ? 'Windows' : isMac ? 'macOS' : 'Linux') + ' · ' + browser;
+            const browser = isEdge ? 'Edge' : isChrome ? 'Chrome' : isFirefox ? 'Firefox' : 'Navegador';
+            label = (isWindows ? 'Windows' : isMac ? 'macOS' : 'PC') + ' · ' + browser;
 
             if ((isChrome || isEdge) && !isFirefox) {
-                btnText = deferredPrompt ? 'AÑADIR A INICIO AHORA' : 'VER INSTRUCCIONES';
+                btnText = deferredPrompt ? 'INSTALAR APLICACIÓN' : 'VER INSTRUCCIONES';
                 steps = [
                     { icon: 'i-desktop', text: deferredPrompt
-                        ? 'Toca el botón de abajo para añadir directamente.'
-                        : 'En la barra de dirección busca el ícono ⊕ o de instalación a la derecha.' },
+                        ? 'Haz clic en el botón de abajo para instalar directamente.'
+                        : 'En la barra de direcciones busca el ícono de instalación a la derecha.' },
                     { text: 'O ve al menú ⋮ → "Guardar e instalar" → "Instalar sitio como app".' },
-                    { text: 'El icono aparecerá en tu escritorio / barra de tareas.' }
+                    { text: 'La app aparecerá en tu escritorio.' }
                 ];
             } else {
                 btnText = 'VER INSTRUCCIONES';
                 steps = [
-                    { icon: 'i-info', text: 'Para la mejor experiencia, usa Google Chrome o Microsoft Edge.' },
-                    { text: 'Abre esta página en Chrome/Edge y busca el ícono de instalación en la barra de dirección.' },
-                    { text: 'Haz clic en "Instalar" para añadir el acceso directo.' }
+                    { icon: 'i-info', text: 'Para una instalación automática usa Chrome o Edge.' },
+                    { text: 'Abre esta página en Chrome y busca el ícono de instalar en la barra de direcciones.' },
+                    { text: 'Haz clic para añadir el acceso directo como aplicación.' }
                 ];
             }
 
@@ -572,8 +522,8 @@
             label = 'Tu dispositivo';
             btnText = 'VER INSTRUCCIONES';
             steps = [
-                { icon: 'i-more', text: 'Abre el menú de tu navegador (ícono ⋮ o ≡).' },
-                { text: 'Busca la opción "Añadir a pantalla de inicio" o "Instalar app".' },
+                { icon: 'i-more', text: 'Abre el menú de tu navegador.' },
+                { text: 'Busca la opción "Añadir a pantalla de inicio" o "Instalar".' },
                 { text: 'Confirma para crear el acceso directo.' }
             ];
         }
@@ -596,9 +546,8 @@
     function updateButtonForNative() {
         const btn = document.getElementById('btnAction');
         if (btn && (isAndroid || (!isIOS && (isWindows || isMac || isLinux)))) {
-            btn.textContent = 'AÑADIR A INICIO AHORA';
-            // Re-render steps para Android con prompt disponible
-            buildModal();
+            btn.textContent = (isWindows || isMac || isLinux) ? 'INSTALAR APLICACIÓN' : 'AÑADIR A INICIO AHORA';
+            buildModal(); // Re-renderizar instrucciones si el prompt nativo se activó
         }
     }
 
@@ -608,17 +557,16 @@
     async function handleAction() {
         const btn = document.getElementById('btnAction');
 
-        // 1. Chrome/Edge con función automática de instalación disponible
+        // Instalación nativa automática si el navegador lo permite (Chrome/Edge/Android)
         if (deferredPrompt) {
             btn.disabled = true;
-            btn.textContent = 'AÑADIENDO…';
+            btn.textContent = 'INSTALANDO…';
             try {
                 await deferredPrompt.prompt();
                 const choice = await deferredPrompt.userChoice;
                 deferredPrompt = null;
                 if (choice.outcome === 'accepted') {
-                    localStorage.setItem(INSTALLED_KEY, '1');
-                    btn.textContent = '✓ AÑADIDO CORRECTAMENTE';
+                    btn.textContent = '✓ INSTALADO';
                     setTimeout(goToApp, 1200);
                 } else {
                     btn.disabled = false;
@@ -631,7 +579,7 @@
             return;
         }
 
-        // 2. iOS Safari alternativo → forzar abrir en Safari nativo
+        // Si es iOS pero NO es Safari (Ej: Abrió link desde Facebook o Chrome en iPhone)
         if (isIOS && !isSafari) {
             window.location.href = 'x-web-search://?q=' + encodeURIComponent(location.href);
             setTimeout(() => {
@@ -641,18 +589,12 @@
             return;
         }
 
-        // 3. PARA DISPOSITIVOS MANUALES (iOS Safari, Firefox, Samsung)
-        // No redirigimos automáticamente a la app. Si lo hacemos, el usuario no podrá 
-        // añadir esta página al inicio. Simplemente le pedimos visualmente que lo haga.
-        const originalText = btn.textContent;
-        btn.textContent = '↑ SIGA LOS PASOS ARRIBA ↑';
-        setTimeout(() => {
-            btn.textContent = originalText;
-        }, 3000);
+        // Si es cualquier otro caso donde la instalación es manual, pasamos directo al sistema.
+        skipAndGo();
     }
 
     // ─────────────────────────────────────────────
-    // SALTAR → ir a la app directamente sin instalar
+    // SALTAR E IR AL SISTEMA
     // ─────────────────────────────────────────────
     function skipAndGo() {
         hide('modalOverlay');
@@ -660,19 +602,17 @@
     }
 
     // ─────────────────────────────────────────────
-    // IR A LA APP
+    // MOSTRAR PANTALLA DE CARGA Y ABRIR APP URL
     // ─────────────────────────────────────────────
     function goToApp() {
         show('redirectScreen');
-        // Pequeño delay para que se vea la pantalla de carga
+        // Pequeño retraso para que se vea la animación de carga antes de redireccionar
         setTimeout(() => {
             window.location.href = APP_URL;
         }, 800);
     }
 
-    // ─────────────────────────────────────────────
-    // HELPERS
-    // ─────────────────────────────────────────────
+    // Helpers
     function show(id) { document.getElementById(id).classList.remove('hidden'); }
     function hide(id) { document.getElementById(id).classList.add('hidden');    }
 </script>
