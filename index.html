@@ -135,7 +135,7 @@
         }
         .icon-wrap svg { width: 36px; height: 36px; fill: currentColor; }
 
-        /* App icon preview (Actualizado para usar la imagen png con bordes de 20px) */
+        /* App icon preview (Imagen png con bordes de 20px) */
         .app-icon-preview {
             width: 56px;
             height: 56px;
@@ -408,11 +408,13 @@
     // CONSTANTES
     // ─────────────────────────────────────────────
     const APP_URL    = 'https://script.google.com/macros/s/AKfycbxErZpzjxX4OtfdjcHgr7zdVkTiATpbH0q8MA35F3gv9asJ4lAZv3z_hXBvRh4623ho/exec';
-    const INSTALLED_KEY = 'lb_installed_v1';
+    
+    // HE CAMBIADO LA VERSIÓN (v2) PARA QUE SE BORRE LA MEMORIA DE TU NAVEGADOR
+    // Y TE VUELVA A MOSTRAR EL CUADRO DE INSTALACIÓN EN TUS PRUEBAS.
+    const INSTALLED_KEY = 'lb_installed_v2';
 
     // ─────────────────────────────────────────────
-    // REGISTRO DEL SERVICE WORKER
-    // (Esto es VITAL para que Android y Chrome disparen la instalación automática)
+    // REGISTRO DEL SERVICE WORKER (Necesario para instalación automática)
     // ─────────────────────────────────────────────
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -606,7 +608,7 @@
     async function handleAction() {
         const btn = document.getElementById('btnAction');
 
-        // Chrome/Edge con beforeinstallprompt disponible
+        // 1. Chrome/Edge con función automática de instalación disponible
         if (deferredPrompt) {
             btn.disabled = true;
             btn.textContent = 'AÑADIENDO…';
@@ -629,25 +631,28 @@
             return;
         }
 
-        // iOS no-Safari → abrir en Safari
+        // 2. iOS Safari alternativo → forzar abrir en Safari nativo
         if (isIOS && !isSafari) {
             window.location.href = 'x-web-search://?q=' + encodeURIComponent(location.href);
-            // Fallback: intentar abrir directamente
             setTimeout(() => {
-                // Mostrar instrucción de copiar URL
                 document.getElementById('modalDesc').textContent =
                     'Copia esta URL y ábrela en Safari: ' + location.href;
             }, 400);
             return;
         }
 
-        // Para el resto (instrucciones manuales) → el botón muestra que se leyó, y abre la app
-        localStorage.setItem(INSTALLED_KEY, '1');
-        skipAndGo();
+        // 3. PARA DISPOSITIVOS MANUALES (iOS Safari, Firefox, Samsung)
+        // No redirigimos automáticamente a la app. Si lo hacemos, el usuario no podrá 
+        // añadir esta página al inicio. Simplemente le pedimos visualmente que lo haga.
+        const originalText = btn.textContent;
+        btn.textContent = '↑ SIGA LOS PASOS ARRIBA ↑';
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 3000);
     }
 
     // ─────────────────────────────────────────────
-    // SALTAR → ir a la app directamente
+    // SALTAR → ir a la app directamente sin instalar
     // ─────────────────────────────────────────────
     function skipAndGo() {
         hide('modalOverlay');
